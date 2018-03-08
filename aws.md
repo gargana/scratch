@@ -1,5 +1,5 @@
 # Random AWS cli stuffs
-### Delete all my snapshots
+## Delete all my snapshots
     for region in `aws ec2 describe-regions | jq ".[]|.[]|.RegionName"|sed 's/"//g'`
     do
         echo $region
