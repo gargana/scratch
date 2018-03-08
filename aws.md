@@ -1,8 +1,13 @@
+# Random AWS cli stuffs
+    # Delete all my snapshots
     for region in `aws ec2 describe-regions | jq ".[]|.[]|.RegionName"|sed 's/"//g'`
     do
         echo $region
-        aws rds --region $region describe-db-snapshots | jq ".[]|.[]|.DBSnapshotArn"
-        has_snaps=`aws rds --region $region describe-db-snapshots | jq ".[]|.[]|.DBSnapshotArn"|wc -l`
+        echo  aws rds --region $region describe-db-snapshots | \
+            jq ".[]|.[]|.DBSnapshotArn"
+        aws rds --region $region describe-db-snapshots | \
+            jq ".[]|.[]|.DBSnapshotArn"
+        has_snaps=$(aws rds --region $region describe-db-snapshots | jq ".[]|.[]|.DBSnapshotArn"|wc -l)
         echo "Snaps $has_snaps"
         if [ $has_snaps -ne 0 ]
         then
