@@ -1,6 +1,7 @@
 # Random AWS cli stuff:
 ## Delete all my snapshots:
 Quickly iterate over my account and find snapshots and delete them
+|
 ```bash
 for region in `aws ec2 describe-regions | jq ".[]|.[]|.RegionName"|sed 's/"//g'`
 do
@@ -25,3 +26,4 @@ do
     echo -------
 done
 ```
+|
