@@ -13,14 +13,8 @@ do
     echo "Snaps $has_snaps"
     if [ $has_snaps -ne 0 ]
     then
-        aws rds --region $region describe-db-snapshots | \ 
-            jq ".[]|.[]|.DBSnapshotIdentifier" | \
-            sed 's/"//g' | \
-            xargs -L 1 echo aws rds delete-db-snapshot --region $region --db-snapshot-identifier 
-        aws rds --region $region describe-db-snapshots | \
-            jq ".[]|.[]|.DBSnapshotIdentifier" | \ 
-            sed 's/"//g' | \
-            xargs -L 1 aws rds delete-db-snapshot --region $region --db-snapshot-identifier 
+        aws rds --region $region describe-db-snapshots | jq ".[]|.[]|.DBSnapshotIdentifier" | sed 's/"//g' | xargs -L 1 echo aws rds delete-db-snapshot --region $region --db-snapshot-identifier 
+        aws rds --region $region describe-db-snapshots | jq ".[]|.[]|.DBSnapshotIdentifier" | sed 's/"//g' | xargs -L 1 aws rds delete-db-snapshot --region $region --db-snapshot-identifier 
     fi
     echo -------
 done
