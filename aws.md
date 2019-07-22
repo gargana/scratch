@@ -30,7 +30,7 @@ do
 done
 ```
 ## Delete log groups
-```
+```bash
 for i in $(aws logs describe-log-groups | jq -r ".|.[]|.[]|.logGroupName")
 do
   echo "Delete '$i'"
