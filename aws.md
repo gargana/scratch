@@ -56,3 +56,30 @@ do
   done
 done
 ```
+
+## Search CloudTrail for stack launch failures at the CreateStack API level
+```bash
+DAY_IN_SECONDS=$(echo 60*60*24 | bc)
+DAYS_BACK=7
+START_TIME=$(echo "$(date +%s)-($DAYS_BACK*$DAY_IN_SECONDS)" | bc)
+END_TIME=$(echo $START_TIME+$DAY_IN_SECONDS | bc)
+# Display start/end times in human parseable format
+  
+echo -n "Start: "
+date --date="@$START_TIME"
+echo -n "End: "
+date --date="@$END_TIME"
+
+for REGION in $(aws ec2 describe-regions | jq ".[]|.[]|.RegionName"|sed 's/"//g')
+do
+  echo $REGION
+  
+  # TODO: Looking a day at a time. This may be too much info so need to make more granular
+  aws cloudtrail lookup-events \
+    --region $REGION \
+    --lookup-attributes AttributeKey=EventName,AttributeValue=CreateStack \
+    --start-time $START_TIME | \
+    jq -r ".[]|.[]|.CloudTrailEvent" | \
+    jq "select(.errorCode != null)|.errorCode, .errorMessage"
+done
+```
