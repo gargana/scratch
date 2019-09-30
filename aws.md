@@ -2,7 +2,7 @@
 ## Delete all my RDS Snapshots:
 Quickly iterate over my account and find snapshots and delete them
 ```bash
-for region in `aws ec2 describe-regions | jq ".[]|.[]|.RegionName"|sed 's/"//g'`
+for region in $(aws ec2 describe-regions | jq -r ".[]|.[]|.RegionName")
 do
     echo $region
     echo 'aws rds --region $region describe-db-snapshots | \
