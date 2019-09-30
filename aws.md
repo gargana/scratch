@@ -78,7 +78,8 @@ do
   aws cloudtrail lookup-events \
     --region $REGION \
     --lookup-attributes AttributeKey=EventName,AttributeValue=CreateStack \
-    --start-time $START_TIME | \
+    --start-time $START_TIME \
+    --end-time $END_TIME \
     jq -r ".[]|.[]|.CloudTrailEvent" | \
     jq "select(.errorCode != null)|.errorCode, .errorMessage"
 done
