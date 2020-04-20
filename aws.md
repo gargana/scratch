@@ -84,7 +84,7 @@ do
     jq "select(.errorCode != null)|.errorCode, .errorMessage"
 done
 ```
-## Generate AMI List for CFN
+## Generate AMI List for CFN (see here for automatically handled codes: https://github.com/aws-quickstart/taskcat/blob/master/taskcat/cfg/amiupdater.cfg.yml)
 ```bash
 #!/bin/sh
 
