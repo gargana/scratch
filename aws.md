@@ -29,15 +29,6 @@ do
     echo -------
 done
 ```
-## Delete log groups
-```bash
-for i in $(aws logs describe-log-groups | jq -r ".|.[]|.[]|.logGroupName")
-do
-  echo "Delete '$i'"
-  aws logs delete-log-group --log
--group-name $i
-done
-```
 
 ## Delete all TaskCat stacks
 ```bash
