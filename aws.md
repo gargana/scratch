@@ -131,12 +131,22 @@ done
 KEYPAIR_NAME=somekeynamehere
 for i in $(aws ec2 describe-regions|jq -r ".[]|.[]|.RegionName")
 do
-echo $i
-aws ec2 delete-key-pair --region $i --key-name=$KEYPAIR_NAME 2>&1 > /dev/null
-KEY_JSON=$(aws ec2 create-key-pair --region $i --key-name $KEYPAIR_NAME)
-echo $KEY_JSON | jq -r ".KeyMaterial" | tr "\\n" "\n" > ~/.ssh/${KEYPAIR_NAME}-${i}
-chmod 600 ~/.ssh/${KEYPAIR_NAME}-${i}
+    echo $i
+    aws ec2 delete-key-pair --region $i --key-name=$KEYPAIR_NAME 2>&1 > /dev/null
+    KEY_JSON=$(aws ec2 create-key-pair --region $i --key-name $KEYPAIR_NAME)
+    echo $KEY_JSON | jq -r ".KeyMaterial" | tr "\\n" "\n" > ~/.ssh/${KEYPAIR_NAME}-${i}
+    chmod 600 ~/.ssh/${KEYPAIR_NAME}-${i}
 done
+
+# results in:
+# ~/.ssh/${KEYPAIR_NAME}-${REGION}
+# eg:
+# ~/.ssh/somekeynamehere-us-east-1
+# ~/.ssh/somekeynamehere-us-east-2
+# ~/.ssh/somekeynamehere-us-west-1
+# ~/.ssh/somekeynamehere-us-west-2
+# ...
+# ...
 ```
 
 ## Cleanup LogGroups:
