@@ -1,4 +1,7 @@
 # Random AWS cli stuff:
+
+# NOTE: Use at your own risk - these scripts are random bits I have hobbled together to help myself and are here in case others find them useful
+
 ## Delete all my RDS Snapshots:
 Quickly iterate over my account and find snapshots and delete them
 ```bash
