@@ -173,3 +173,61 @@ do
     done
 done
 ```
+
+## Generate initial AMI list:
+```bash
+#!/bin/sh
+
+AMI_CODE="CENTOS7"
+AMI_DESCRIPTION="CentOS 7 (x86_64) - with Updates HVM"
+AMI_FILTER="description"
+AMI_FILTER_VALUE="CentOS Linux 7 x86_64 HVM EBS ENA 19"
+AMI_OWNER_ID="679593333241"
+
+AMI_CODE="CISUBUNTU1604"
+AMI_DESCRIPTION="CIS 1 Ubuntu 16.04"
+AMI_FILTER="product-code"
+AMI_FILTER_VALUE="2l0khimiqztu90zd64xu99tz5"
+AMI_OWNER_ID="679593333241"
+
+AMI2_CODE="US1604HVM"
+AMI2_DESCRIPTION="Ubuntu 16.04 LTS"
+AMI2_FILTER="name"
+AMI2_FILTER_VALUE="ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-????????"
+AMI2_OWNER_ID="099720109477"
+
+echo "Metadata:"
+echo "  AWSAMIRegionMap:"
+echo "    Filters:"
+echo "      ${AMI_CODE}:"
+echo "        ${AMI_FILTER}: 2l0khimiqztu90zd64xu99tz5"
+echo "Mappings:"
+echo "  AWSAMIRegionMap:"
+echo "    AMI:"
+echo "      ${AMI_CODE}: \"${AMI_DESCRIPTION}\""
+echo "      ${AMI2_CODE}: \"${AMI2_DESCRIPTION}\""
+
+for reg in $(aws ec2 describe-regions | jq -r ".|.Regions[]|.RegionName")
+do
+  echo "    $reg:"
+  AMI_ID=$(
+    aws ec2 describe-images --region $reg --filters "Name=${AMI_FILTER},Values='${AMI_FILTER_VALUE}'" "Name=owner-id,Values=${AMI_OWNER_ID}" | \
+        jq -r -s ".|.[]|.[]|sort_by(.CreationDate)|.[-1]|.ImageId"
+  )
+  DESC=$(
+    aws ec2 describe-images --region $reg --filters "Name=${AMI_FILTER},Values='${AMI_FILTER_VALUE}'" "Name=owner-id,Values=${AMI_OWNER_ID}" | \
+        jq -r -s ".|.[]|.[]|sort_by(.CreationDate)|.[-1]|.Name"
+  )
+  AMI2_ID=$(
+    aws ec2 describe-images --region $reg --filters "Name=${AMI2_FILTER},Values='${AMI2_FILTER_VALUE}'" "Name=owner-id,Values=${AMI2_OWNER_ID}" | \
+        jq -r -s ".|.[]|.[]|sort_by(.CreationDate)|.[-1]|.ImageId"
+  )
+  DESC2=$(
+    aws ec2 describe-images --region $reg --filters "Name=${AMI2_FILTER},Values='${AMI2_FILTER_VALUE}'" "Name=owner-id,Values=${AMI2_OWNER_ID}" | \
+        jq -r -s ".|.[]|.[]|sort_by(.CreationDate)|.[-1]|.Name"
+  )
+
+  echo "      ${AMI_CODE}: ${AMI_ID} #${DESC}"
+  echo "      ${AMI2_CODE}: ${AMI2_ID} #${DESC2}"
+done
+```
