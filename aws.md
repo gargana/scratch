@@ -234,3 +234,14 @@ do
   echo "      ${AMI2_CODE}: ${AMI2_ID} #${DESC2}"
 done
 ```
+
+### RULES EXAMPLE
+```
+Rules:
+  TrialSingleNode:
+    RuleCondition:
+      !Equals [ !Ref FeatureKeyFile, '' ]
+    Assertions:
+    - Assert: !Equals [!Ref NumberOfInstances, '1']]
+      AssertDescription: "If you are not providing your own license you may only launch a single node."
+```
